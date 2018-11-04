@@ -20,6 +20,7 @@ class AddUserInfo extends Component {
       }
     }));
   };
+
   handleAge = e => {
     let handleAge = e.target.value;
     this.setState(prevState => ({
@@ -31,22 +32,29 @@ class AddUserInfo extends Component {
   };
 
   handleDrink = e => {
-    let handleDrink =
-      e.target.value === ""
-        ? document.getElementById("default").value
-        : e.target.value;
-    this.setState(prevState => ({
-      userData: {
-        ...prevState.userData,
-        drink: handleDrink
-      }
-    }));
+    let dataDrink = e.target.value;
+    if (dataDrink.length > 0) {
+      this.setState(prevState => ({
+        userData: {
+          ...prevState.userData,
+          drink: dataDrink
+        }
+      }));
+    }
   };
+
   addInfo = () => {
-    const dataUser = this.state.userData;
-    this.props.addUser(dataUser);
+    let dataUser = this.state.userData;
+    let defaultDrink = document.getElementById("default");
+    this.props.addUser({
+      fio: dataUser.fio,
+      age: dataUser.age,
+      drink: dataUser.drink === "" ? defaultDrink.value : dataUser.drink
+    });
   };
+
   render() {
+    const { isChanged, fio, age, drink } = this.props;
     return (
       <div className="row mt-4">
         <div className="col">
@@ -71,19 +79,27 @@ class AddUserInfo extends Component {
             id="exampleFormControlSelect1"
             onChange={this.handleDrink}
           >
-            <option id="default">Tea</option>
-            <option>Coffee</option>
-            <option>Juice</option>
+            <option id="default" value="Tea">
+              Tea
+            </option>
+            <option value="Coffee">Coffee</option>
+            <option value="Juice">Juice</option>
           </select>
         </div>
-        <div className="col">
-          <button
-            className="btn btn-primary form-control"
-            onClick={this.addInfo}
-          >
-            Add
-          </button>
-        </div>
+        {isChanged ? (
+          <div className="col">
+            <button className="btn btn-info form-control">Update</button>
+          </div>
+        ) : (
+          <div className="col">
+            <button
+              className="btn btn-primary form-control"
+              onClick={this.addInfo}
+            >
+              Add
+            </button>
+          </div>
+        )}
       </div>
     );
   }
